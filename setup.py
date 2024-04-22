@@ -1,18 +1,29 @@
+import glob
+import os.path as osp
 from setuptools import setup
-from torch.utils.cpp_extension import CppExtension, BuildExtension
+from torch.utils.cpp_extension import CUDAExtension, BuildExtension
+
+
+ROOT_DIR = osp.dirname(osp.abspath(__file__))
+include_dirs = [osp.join(ROOT_DIR, "include")]
+
+sources = glob.glob('*.cpp')+glob.glob('*.cu')
+
 
 setup(
-    # package 的名称，比如叫pytorch，tensorflow,numpy 这样子
     name='cppcuda_tutorial',
     version='1.0',
-    author='mzp',
+    author='mazipei',
     author_email='mazipei21@gmail.com',
-    description='cppcuda example',
-    long_description='cppcuda example',
+    description='cppcuda_tutorial',
+    long_description='cppcuda_tutorial',
     ext_modules=[
-        CppExtension(
+        CUDAExtension(
             name='cppcuda_tutorial',
-            sources=['interpolation.cpp']
+            sources=sources,
+            include_dirs=include_dirs,
+            extra_compile_args={'cxx': ['-O2'],
+                                'nvcc': ['-O2']}
         )
     ],
     cmdclass={
